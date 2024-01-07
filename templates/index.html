@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RabbitMQ Web App</title>
+</head>
+<body>
+    <h1>Bem-vindo à sua aplicação RabbitMQ!</h1>
+    <form id="messageForm">
+        <label for="message">Digite sua mensagem:</label>
+        <input type="text" id="message" name="message" required>
+        <button type="button" onclick="sendMessage()">Enviar Mensagem</button>
+    </form>
+
+    <h2>Mensagens Recebidas:</h2>
+    <ul>
+        {% for mensagem in mensagens %}
+            <li>{{ mensagem }}</li>
+        {% endfor %}
+    </ul>
+
+    <script>
+        function sendMessage() {
+            var message = document.getElementById("message").value;
+            fetch("/publicar", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ message: message })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Erro HTTP! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data);
+                alert("Mensagem enviada!");
+            })
+            .catch(error => {
+                console.error("Erro ao enviar mensagem:", error);
+                alert("Erro ao enviar mensagem. Consulte o console para detalhes.");
+            });
+        }
+    </script>
+</body>
+</html>
